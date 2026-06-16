@@ -12,3 +12,5 @@ services:
         value: 3.12.8
       - key: CORS_ORIGINS
         value: http://localhost:3000
+      - key: CORS_ORIGIN_REGEX
+        value: https://.*\.vercel\.app
