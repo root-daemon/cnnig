@@ -1,0 +1,17 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+nvim.log
+Working_CNN*.ipynb
+
+runs.db
+*.sqlite
+*.sqlite3
+
+web/.next/
+web/node_modules/
+web/.env*.local
+web/.vercel/
