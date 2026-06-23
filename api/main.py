@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.db import init_db
 from api.model import CLASS_NAMES, DEVICE
-from api.routes import analytics, history, predict
+from api.routes import analytics, history, predict, analyze
 
 
 @asynccontextmanager
@@ -37,6 +37,7 @@ app.add_middleware(
 )
 
 app.include_router(predict.router)
+app.include_router(analyze.router)
 app.include_router(history.router)
 app.include_router(analytics.router)
 

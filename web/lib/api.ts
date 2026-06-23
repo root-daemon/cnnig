@@ -45,6 +45,58 @@ export type AnalyticsOverview = {
   last_run_at: string | null;
 };
 
+export type DepthBand = {
+  band: number;
+  inner_radius: number;
+  outer_radius: number;
+  defect_density: number;
+};
+
+export type DensityAnalysis = {
+  grid_size: number;
+  density_grid: number[][];
+};
+
+export type DefectSpread = {
+  defect_pixel_count: number;
+  total_pixel_count: number;
+  affected_area_percentage: number;
+};
+
+export type Topography3D = {
+  height_map: number[][];
+  min_height: number;
+  max_height: number;
+};
+
+export type QuadrantMetrics = {
+  defect_count: number;
+  total_pixels: number;
+  defect_percentage: number;
+};
+
+export type CutlineAnalysis = {
+  x_line: number;
+  y_line: number;
+  quadrants: Record<string, QuadrantMetrics>;
+  recommended_low_defect_quadrant: string;
+};
+
+export type FullAnalysis = {
+  defect_map: number[][];
+  region_analysis: Record<string, number>;
+  depth_analysis: DepthBand[];
+  density_analysis: DensityAnalysis;
+  defect_spread: DefectSpread;
+  topography_3d: Topography3D;
+  cutline_analysis: CutlineAnalysis;
+};
+
+export type AnalyzeResponse = {
+  prediction: PredictionResponse;
+  analysis: FullAnalysis;
+};
+
 export type ClassCount = { class_name: string; count: number };
 export type ConfidenceBin = { lower: number; upper: number; count: number };
 export type DayCount = { date: string; count: number };
@@ -84,6 +136,17 @@ export const api = {
     const form = new FormData();
     files.forEach((f) => form.append("files", f));
     return request<BatchItemResponse[]>("/api/predict/batch", {
+      method: "POST",
+      body: form,
+    });
+  },
+
+  analyze: async (file: File, xLine = 32, yLine = 32): Promise<AnalyzeResponse> => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("x_line", String(xLine));
+    form.append("y_line", String(yLine));
+    return request<AnalyzeResponse>("/api/analyze", {
       method: "POST",
       body: form,
     });

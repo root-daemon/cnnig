@@ -54,3 +54,48 @@ class ConfidenceBin(BaseModel):
 class DayCount(BaseModel):
     date: str
     count: int
+
+
+class DepthBand(BaseModel):
+    band: int
+    inner_radius: float
+    outer_radius: float
+    defect_density: float
+
+class DensityAnalysis(BaseModel):
+    grid_size: int
+    density_grid: list[list[float]]
+
+class DefectSpread(BaseModel):
+    defect_pixel_count: int
+    total_pixel_count: int
+    affected_area_percentage: float
+
+class Topography3D(BaseModel):
+    height_map: list[list[float]]
+    min_height: float
+    max_height: float
+
+class QuadrantMetrics(BaseModel):
+    defect_count: int
+    total_pixels: int
+    defect_percentage: float
+
+class CutlineAnalysis(BaseModel):
+    x_line: int
+    y_line: int
+    quadrants: dict[str, QuadrantMetrics]
+    recommended_low_defect_quadrant: str
+
+class FullAnalysis(BaseModel):
+    defect_map: list[list[int]]
+    region_analysis: dict[str, float]
+    depth_analysis: list[DepthBand]
+    density_analysis: DensityAnalysis
+    defect_spread: DefectSpread
+    topography_3d: Topography3D
+    cutline_analysis: CutlineAnalysis
+
+class AnalyzeResponse(BaseModel):
+    prediction: PredictionResponse
+    analysis: FullAnalysis
