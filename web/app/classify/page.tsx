@@ -163,6 +163,7 @@ export default function ClassifyPage() {
                 xLine={xLine} 
                 yLine={yLine} 
                 onCutlineChange={handleCutlineChange} 
+                depthAnalysis={result?.analysis?.depth_analysis}
              />
           </div>
       </div>
