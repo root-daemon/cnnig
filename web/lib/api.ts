@@ -6,10 +6,10 @@ export const CLASS_NAMES = [
   "Donut",
   "Edge-Loc",
   "Edge-Ring",
-  "Loc",
-  "Near-full",
+  "Local",
   "Random",
   "Scratch",
+  "Near-full",
 ] as const;
 
 export type PredictionResponse = {

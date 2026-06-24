@@ -21,10 +21,10 @@ CLASS_NAMES = [
     "Donut",
     "Edge-Loc",
     "Edge-Ring",
-    "Loc",
-    "Near-full",
+    "Local",
     "Random",
     "Scratch",
+    "Near-full",
 ]
 NUM_CLASSES = len(CLASS_NAMES)
 DEVICE = torch.device(
@@ -116,7 +116,7 @@ def to_64x64_array(arr: np.ndarray) -> np.ndarray:
 
     if arr.shape != (IMG_SIZE, IMG_SIZE):
         img = Image.fromarray(arr.astype(np.float32))
-        img = img.resize((IMG_SIZE, IMG_SIZE), Image.NEAREST)
+        img = img.resize((IMG_SIZE, IMG_SIZE), Image.Resampling.BILINEAR)
         arr = np.asarray(img, dtype=np.float32)
 
     arr = arr.astype(np.float32)
