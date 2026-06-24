@@ -34,7 +34,7 @@ export function DepthAnalysis({ data }: DepthAnalysisProps) {
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--muted)" />
               <XAxis dataKey="band" tickLine={false} axisLine={false} tickMargin={10} />
               <YAxis unit="%" tickLine={false} axisLine={false} tickMargin={10} />
               <Tooltip 
@@ -44,9 +44,9 @@ export function DepthAnalysis({ data }: DepthAnalysisProps) {
               <Line 
                 type="monotone" 
                 dataKey="density" 
-                stroke="hsl(var(--primary))" 
+                stroke="var(--primary)" 
                 strokeWidth={2} 
-                dot={{ r: 4, fill: "hsl(var(--background))", strokeWidth: 2 }}
+                dot={{ r: 4, fill: "var(--background)", strokeWidth: 2 }}
                 activeDot={{ r: 6 }}
                />
             </LineChart>

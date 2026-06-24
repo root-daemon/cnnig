@@ -26,8 +26,8 @@ export function ClassDistributionChart({ data }: { data: ClassCount[] }) {
         <YAxis fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
         <Tooltip
           contentStyle={{
-            background: "hsl(var(--popover))",
-            border: "1px solid hsl(var(--border))",
+            background: "var(--popover)",
+            border: "1px solid var(--border)",
             borderRadius: "0.5rem",
             fontSize: "0.875rem",
           }}

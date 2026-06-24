@@ -42,7 +42,7 @@ export function DefectSpread({ spread, defectMap }: DefectSpreadProps) {
                     <div
                     key={`${r}-${c}`}
                     className="aspect-square"
-                    style={{ backgroundColor: v ? "hsl(var(--destructive))" : "hsl(var(--background))" }}
+                    style={{ backgroundColor: v ? "var(--destructive)" : "var(--background)" }}
                     />
                 ))
                 )}
