@@ -45,24 +45,6 @@ export type AnalyticsOverview = {
   last_run_at: string | null;
 };
 
-export type DepthBand = {
-  band: number;
-  inner_radius: number;
-  outer_radius: number;
-  defect_density: number;
-};
-
-export type DensityAnalysis = {
-  grid_size: number;
-  density_grid: number[][];
-};
-
-export type DefectSpread = {
-  defect_pixel_count: number;
-  total_pixel_count: number;
-  affected_area_percentage: number;
-};
-
 export type Topography3D = {
   height_map: number[][];
   min_height: number;
@@ -85,9 +67,7 @@ export type CutlineAnalysis = {
 export type FullAnalysis = {
   defect_map: number[][];
   region_analysis: Record<string, number>;
-  depth_analysis: DepthBand[];
-  density_analysis: DensityAnalysis;
-  defect_spread: DefectSpread;
+  saliency_map: number[][];
   topography_3d: Topography3D;
   cutline_analysis: CutlineAnalysis;
 };

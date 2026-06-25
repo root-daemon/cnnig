@@ -56,21 +56,6 @@ class DayCount(BaseModel):
     count: int
 
 
-class DepthBand(BaseModel):
-    band: int
-    inner_radius: float
-    outer_radius: float
-    defect_density: float
-
-class DensityAnalysis(BaseModel):
-    grid_size: int
-    density_grid: list[list[float]]
-
-class DefectSpread(BaseModel):
-    defect_pixel_count: int
-    total_pixel_count: int
-    affected_area_percentage: float
-
 class Topography3D(BaseModel):
     height_map: list[list[float]]
     min_height: float
@@ -90,9 +75,7 @@ class CutlineAnalysis(BaseModel):
 class FullAnalysis(BaseModel):
     defect_map: list[list[int]]
     region_analysis: dict[str, float]
-    depth_analysis: list[DepthBand]
-    density_analysis: DensityAnalysis
-    defect_spread: DefectSpread
+    saliency_map: list[list[float]]
     topography_3d: Topography3D
     cutline_analysis: CutlineAnalysis
 

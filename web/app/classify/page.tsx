@@ -19,19 +19,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { WaferDisplay } from "@/components/analysis/wafer-display";
 import { RegionAnalysis } from "@/components/analysis/region-analysis";
-import { DepthAnalysis } from "@/components/analysis/depth-analysis";
-import { DensityHeatmap } from "@/components/analysis/density-heatmap";
+import { SaliencyMap } from "@/components/analysis/saliency-map";
 import { Topography3D } from "@/components/analysis/topography-3d";
-import { DefectSpread } from "@/components/analysis/defect-spread";
 import { CutlineAnalysis } from "@/components/analysis/cutline-analysis";
 
 const TABS = [
   "Overview",
   "Region Analysis",
-  "Depth Analysis",
-  "Density Heatmap",
+  "Saliency Map",
   "3D Topography",
-  "Defect Spread",
   "Cut-line Analysis",
 ];
 
@@ -90,11 +86,14 @@ export default function ClassifyPage() {
 
   const overview = useMemo(() => {
       if (!result) return null;
+      const defectPixels = result.analysis.defect_map.flat().reduce((sum, val) => sum + val, 0);
+      const totalPixels = result.analysis.defect_map.flat().length || 1;
+      const affectedArea = (defectPixels / totalPixels) * 100;
       return {
           predictedClass: result.prediction.predicted_class,
           confidence: result.prediction.confidence,
-          defectPixels: result.analysis.defect_spread.defect_pixel_count,
-          affectedArea: result.analysis.defect_spread.affected_area_percentage,
+          defectPixels,
+          affectedArea,
       }
   }, [result]);
 
@@ -163,7 +162,6 @@ export default function ClassifyPage() {
                 xLine={xLine} 
                 yLine={yLine} 
                 onCutlineChange={handleCutlineChange} 
-                depthAnalysis={result?.analysis?.depth_analysis}
              />
           </div>
       </div>
@@ -207,17 +205,11 @@ export default function ClassifyPage() {
                 <TabsContent value="Region Analysis" className="mt-0 outline-none">
                     <RegionAnalysis data={result.analysis.region_analysis} />
                 </TabsContent>
-                <TabsContent value="Depth Analysis" className="mt-0 outline-none">
-                    <DepthAnalysis data={result.analysis.depth_analysis} />
-                </TabsContent>
-                <TabsContent value="Density Heatmap" className="mt-0 outline-none">
-                    <DensityHeatmap data={result.analysis.density_analysis} />
+                <TabsContent value="Saliency Map" className="mt-0 outline-none">
+                    <SaliencyMap data={result.analysis.saliency_map} />
                 </TabsContent>
                 <TabsContent value="3D Topography" className="mt-0 outline-none">
                     <Topography3D data={result.analysis.topography_3d} />
-                </TabsContent>
-                <TabsContent value="Defect Spread" className="mt-0 outline-none">
-                    <DefectSpread spread={result.analysis.defect_spread} defectMap={result.analysis.defect_map} />
                 </TabsContent>
                 <TabsContent value="Cut-line Analysis" className="mt-0 outline-none">
                     <CutlineAnalysis data={result.analysis.cutline_analysis} />

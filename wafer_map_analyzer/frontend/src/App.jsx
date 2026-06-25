@@ -5,13 +5,11 @@ import ImageUpload from './components/ImageUpload';
 import WaferDisplay from './components/WaferDisplay';
 import PredictionPanel from './components/PredictionPanel';
 import RegionAnalysis from './components/RegionAnalysis';
-import DepthAnalysis from './components/DepthAnalysis';
-import DensityHeatmap from './components/DensityHeatmap';
+import SaliencyMap from './components/SaliencyMap';
 import Topography3D from './components/Topography3D';
-import DefectSpread from './components/DefectSpread';
 import CutlineAnalysis from './components/CutlineAnalysis';
 
-const TABS = ['Overview', 'Region Analysis', 'Depth Analysis', 'Density Heatmap', '3D Topography', 'Defect Spread', 'Cut-line Analysis'];
+const TABS = ['Overview', 'Region Analysis', 'Saliency Map', '3D Topography', 'Cut-line Analysis'];
 
 export default function App() {
   const [file, setFile] = useState(null);
@@ -26,11 +24,14 @@ export default function App() {
 
   const overview = useMemo(() => {
     if (!prediction || !analysis) return null;
+    const defectPixels = (analysis.defect_map || []).flat().reduce((sum, val) => sum + val, 0);
+    const totalPixels = (analysis.defect_map || []).flat().length || 1;
+    const affectedArea = (defectPixels / totalPixels) * 100;
     return {
       predictedClass: prediction.predicted_class,
       confidence: prediction.confidence,
-      defectPixels: analysis.defect_spread?.defect_pixel_count ?? 0,
-      affectedArea: analysis.defect_spread?.affected_area_percentage ?? 0,
+      defectPixels,
+      affectedArea,
     };
   }, [prediction, analysis]);
 
@@ -132,10 +133,8 @@ export default function App() {
         )}
 
         {activeTab === 'Region Analysis' && <RegionAnalysis data={analysis?.region_analysis} />}
-        {activeTab === 'Depth Analysis' && <DepthAnalysis data={analysis?.depth_analysis} />}
-        {activeTab === 'Density Heatmap' && <DensityHeatmap densityAnalysis={analysis?.density_analysis} />}
+        {activeTab === 'Saliency Map' && <SaliencyMap data={analysis?.saliency_map} />}
         {activeTab === '3D Topography' && <Topography3D topography={analysis?.topography_3d} />}
-        {activeTab === 'Defect Spread' && <DefectSpread spread={analysis?.defect_spread} defectMap={analysis?.defect_map} />}
         {activeTab === 'Cut-line Analysis' && <CutlineAnalysis cutlineData={analysis?.cutline_analysis} />}
       </div>
     </div>

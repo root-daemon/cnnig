@@ -38,53 +38,28 @@ def region_analysis(defect_map: np.ndarray) -> Dict[str, float]:
     }
 
 
-def depth_analysis(defect_map: np.ndarray, bands: int = 10) -> List[Dict]:
-    dist = _distance_map(defect_map.shape)
-    max_r = dist.max()
-    edges = np.linspace(0, max_r, bands + 1)
+def generate_saliency_map(image_norm: np.ndarray) -> List[List[float]]:
+    import torch
+    from api.model import MODEL, DEVICE
 
-    profile = []
-    for i in range(bands):
-        mask = (dist >= edges[i]) & (dist < edges[i + 1])
-        denom = mask.sum()
-        density = float(defect_map[mask].sum() / denom) if denom else 0.0
-        profile.append(
-            {
-                "band": i + 1,
-                "inner_radius": float(edges[i]),
-                "outer_radius": float(edges[i + 1]),
-                "defect_density": density,
-            }
-        )
-    return profile
+    tensor = torch.from_numpy(image_norm.astype(np.float32))[None, None, ...].to(DEVICE)
+    tensor.requires_grad_()
 
+    with torch.enable_grad():
+        output = MODEL(tensor)
+        pred_idx = output.argmax(dim=1).item()
+        score = output[0, pred_idx]
+        MODEL.zero_grad()
+        score.backward()
+        saliency = tensor.grad.data.abs().squeeze().cpu().numpy()
 
-def density_analysis(defect_map: np.ndarray, grid_size: int = 8) -> Dict:
-    h, w = defect_map.shape
-    cell_h, cell_w = h // grid_size, w // grid_size
+        lo, hi = float(saliency.min()), float(saliency.max())
+        if hi > lo:
+            saliency = (saliency - lo) / (hi - lo)
+        else:
+            saliency = np.zeros_like(saliency)
 
-    grid = []
-    for r in range(grid_size):
-        row = []
-        for c in range(grid_size):
-            y0, y1 = r * cell_h, (r + 1) * cell_h
-            x0, x1 = c * cell_w, (c + 1) * cell_w
-            cell = defect_map[y0:y1, x0:x1]
-            row.append(float(cell.mean() if cell.size else 0.0))
-        grid.append(row)
-
-    return {"grid_size": grid_size, "density_grid": grid}
-
-
-def spread_analysis(defect_map: np.ndarray) -> Dict:
-    total = defect_map.size
-    defects = int(defect_map.sum())
-    pct = float((defects / total) * 100.0) if total else 0.0
-    return {
-        "defect_pixel_count": defects,
-        "total_pixel_count": int(total),
-        "affected_area_percentage": pct,
-    }
+    return saliency.tolist()
 
 
 def topography_analysis(defect_map: np.ndarray) -> Dict:
@@ -141,9 +116,7 @@ def run_full_analysis(image_norm: np.ndarray, x_line: int = 32, y_line: int = 32
     return {
         "defect_map": defect_map.tolist(),
         "region_analysis": region_analysis(defect_map),
-        "depth_analysis": depth_analysis(defect_map, bands=10),
-        "density_analysis": density_analysis(defect_map, grid_size=8),
-        "defect_spread": spread_analysis(defect_map),
+        "saliency_map": generate_saliency_map(image_norm),
         "topography_3d": topography_analysis(defect_map),
         "cutline_analysis": cutline_metrics(defect_map, x_line=x_line, y_line=y_line),
     }

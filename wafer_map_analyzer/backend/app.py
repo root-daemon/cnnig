@@ -68,7 +68,13 @@ def analyze():
 
         image_norm, image_tensor = model_service.preprocess_image(uploaded.stream)
         pred = model_service.predict(image_tensor)
-        analysis = run_full_analysis(image_norm, x_line=x_line, y_line=y_line)
+        analysis = run_full_analysis(
+            image_norm,
+            x_line=x_line,
+            y_line=y_line,
+            model=model_service.model,
+            device=model_service.device
+        )
 
         return _ok(
             {
