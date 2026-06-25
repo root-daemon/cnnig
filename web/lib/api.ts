@@ -1,5 +1,5 @@
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL || "https://cnnig-api.onrender.com";
 
 export const CLASS_NAMES = [
   "Center",
