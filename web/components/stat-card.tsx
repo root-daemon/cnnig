@@ -13,16 +13,15 @@ type Props = {
 
 export function StatCard({ label, value, hint, icon: Icon, className }: Props) {
   return (
-    <Card className={cn("p-0 relative overflow-hidden group border-t-2 border-t-primary/50 hover:border-t-primary transition-colors", className)}>
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+    <Card className={cn("shadow-sm", className)}>
       <CardContent className="p-5">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">{label}</p>
-          {Icon && <Icon className="h-4 w-4 text-primary/70 group-hover:text-primary transition-colors" />}
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-muted-foreground">{label}</p>
+          {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
         </div>
-        <p className="text-3xl font-mono text-foreground mt-2">{value}</p>
+        <p className="text-2xl font-bold tracking-tight text-foreground">{value}</p>
         {hint && (
-          <p className="text-xs text-muted-foreground mt-2 font-mono flex items-center gap-1.5 before:content-[''] before:block before:w-1.5 before:h-1.5 before:bg-muted-foreground/30 before:rounded-full">
+          <p className="text-xs text-muted-foreground mt-1.5">
             {hint}
           </p>
         )}

@@ -34,42 +34,42 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="font-mono text-sm text-muted-foreground text-center py-12 border border-dashed border-border/50 rounded-none bg-background/50">
-        // {emptyText ?? "No runs yet."}
+      <div className="text-sm text-muted-foreground text-center py-12 border rounded-xl bg-background/50">
+        {emptyText ?? "No historical data available."}
       </div>
     );
   }
 
   return (
     <>
-      <div className="rounded-none border border-border/50 overflow-hidden bg-background/30 backdrop-blur-sm">
+      <div className="rounded-xl border overflow-hidden bg-background">
         <Table>
           <TableHeader>
-            <TableRow className="border-b-border/50 hover:bg-transparent">
-              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70">When</TableHead>
-              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70">File</TableHead>
-              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70">Prediction</TableHead>
-              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70 text-right">Confidence</TableHead>
-              <TableHead className="w-[100px]" />
+            <TableRow className="bg-muted/50">
+              <TableHead className="text-xs font-medium">Timestamp</TableHead>
+              <TableHead className="text-xs font-medium">Source File</TableHead>
+              <TableHead className="text-xs font-medium">Classification</TableHead>
+              <TableHead className="text-xs font-medium text-right">Confidence Score</TableHead>
+              <TableHead className="w-[80px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {items.map((run) => (
-              <TableRow key={run.id} className="border-b-border/30 hover:bg-secondary/40">
-                <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+              <TableRow key={run.id} className="hover:bg-muted/30">
+                <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                   {formatDistanceToNow(new Date(run.created_at), {
                     addSuffix: true,
                   })}
                 </TableCell>
-                <TableCell className="font-mono text-xs font-medium max-w-[260px] truncate text-foreground/80">
+                <TableCell className="text-sm font-medium text-foreground max-w-[260px] truncate">
                   {run.filename}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider rounded-none border-primary/40 text-primary bg-primary/5">
+                  <Badge variant="secondary" className="font-normal">
                     {run.predicted_class}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-mono text-xs text-right text-foreground">
+                <TableCell className="text-sm font-mono text-right text-muted-foreground">
                   {(run.confidence * 100).toFixed(1)}%
                 </TableCell>
                 <TableCell className="text-right">
@@ -78,7 +78,7 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
                       size="icon"
                       variant="ghost"
                       onClick={() => setActive(run)}
-                      className="rounded-none hover:bg-primary/20 hover:text-primary h-8 w-8"
+                      className="h-8 w-8"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -87,7 +87,7 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
                         size="icon"
                         variant="ghost"
                         onClick={() => onDelete(run.id)}
-                        className="rounded-none hover:bg-destructive/20 hover:text-destructive h-8 w-8"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -103,16 +103,15 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
       <Sheet open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-xl overflow-y-auto rounded-none border-l-primary/30"
+          className="w-full sm:max-w-xl overflow-y-auto"
         >
-          <SheetHeader className="px-6 pt-6 border-b border-border/50 pb-4 mb-4">
-            <SheetTitle className="font-mono uppercase tracking-widest text-primary flex items-center gap-2 text-sm">
-              <div className="w-1.5 h-1.5 bg-primary animate-pulse"></div>
-              Run #{active?.id} Diagnostics
+          <SheetHeader className="px-6 pt-6 pb-4 border-b">
+            <SheetTitle className="text-base font-semibold">
+              Inspection Report #{active?.id}
             </SheetTitle>
           </SheetHeader>
           {active && (
-            <div className="px-6">
+            <div className="p-6">
               <PredictionCard data={active} compact />
             </div>
           )}

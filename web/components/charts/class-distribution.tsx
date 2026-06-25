@@ -16,41 +16,39 @@ export function ClassDistributionChart({ data }: { data: ClassCount[] }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="2 2" className="stroke-border/40" />
+        <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-muted" />
         <XAxis
           dataKey="class_name"
-          fontSize={10}
-          fontFamily="var(--font-mono)"
+          fontSize={12}
           tickLine={false}
           axisLine={false}
-          tick={{ fill: "currentColor", opacity: 0.7 }}
+          tick={{ fill: "var(--color-muted-foreground)" }}
+          dy={10}
         />
         <YAxis 
-          fontSize={10} 
-          fontFamily="var(--font-mono)"
+          fontSize={12} 
           tickLine={false} 
           axisLine={false} 
           allowDecimals={false} 
-          tick={{ fill: "currentColor", opacity: 0.7 }}
+          tick={{ fill: "var(--color-muted-foreground)" }}
         />
         <Tooltip
-          cursor={{ fill: "var(--color-secondary)", opacity: 0.3 }}
+          cursor={{ fill: "var(--color-muted)", opacity: 0.4 }}
           contentStyle={{
             background: "var(--color-card)",
-            border: "1px solid var(--color-primary)",
-            borderRadius: "0",
-            fontSize: "0.75rem",
-            fontFamily: "var(--font-mono)",
-            textTransform: "uppercase",
-            boxShadow: "0 0 10px rgba(0, 229, 255, 0.1)"
+            border: "1px solid var(--color-border)",
+            borderRadius: "0.5rem",
+            fontSize: "0.875rem",
+            boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)"
           }}
-          itemStyle={{ color: "var(--color-primary)" }}
+          itemStyle={{ color: "var(--color-foreground)", fontWeight: 500 }}
+          labelStyle={{ color: "var(--color-muted-foreground)", marginBottom: "4px" }}
         />
         <Bar 
           dataKey="count" 
-          radius={[0, 0, 0, 0]} 
+          radius={[4, 4, 0, 0]} 
           fill="var(--color-primary)" 
-          className="hover:opacity-80 transition-opacity" 
+          maxBarSize={40}
         />
       </BarChart>
     </ResponsiveContainer>
