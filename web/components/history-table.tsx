@@ -34,40 +34,42 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="text-sm text-muted-foreground text-center py-12 border rounded-lg">
-        {emptyText ?? "No runs yet."}
+      <div className="font-mono text-sm text-muted-foreground text-center py-12 border border-dashed border-border/50 rounded-none bg-background/50">
+        // {emptyText ?? "No runs yet."}
       </div>
     );
   }
 
   return (
     <>
-      <div className="rounded-lg border overflow-hidden">
+      <div className="rounded-none border border-border/50 overflow-hidden bg-background/30 backdrop-blur-sm">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>When</TableHead>
-              <TableHead>File</TableHead>
-              <TableHead>Prediction</TableHead>
-              <TableHead className="text-right">Confidence</TableHead>
+            <TableRow className="border-b-border/50 hover:bg-transparent">
+              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70">When</TableHead>
+              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70">File</TableHead>
+              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70">Prediction</TableHead>
+              <TableHead className="font-mono text-xs uppercase tracking-widest text-primary/70 text-right">Confidence</TableHead>
               <TableHead className="w-[100px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {items.map((run) => (
-              <TableRow key={run.id}>
-                <TableCell className="text-muted-foreground whitespace-nowrap">
+              <TableRow key={run.id} className="border-b-border/30 hover:bg-secondary/40">
+                <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
                   {formatDistanceToNow(new Date(run.created_at), {
                     addSuffix: true,
                   })}
                 </TableCell>
-                <TableCell className="font-medium max-w-[260px] truncate">
+                <TableCell className="font-mono text-xs font-medium max-w-[260px] truncate text-foreground/80">
                   {run.filename}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{run.predicted_class}</Badge>
+                  <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider rounded-none border-primary/40 text-primary bg-primary/5">
+                    {run.predicted_class}
+                  </Badge>
                 </TableCell>
-                <TableCell className="text-right tabular-nums">
+                <TableCell className="font-mono text-xs text-right text-foreground">
                   {(run.confidence * 100).toFixed(1)}%
                 </TableCell>
                 <TableCell className="text-right">
@@ -76,6 +78,7 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
                       size="icon"
                       variant="ghost"
                       onClick={() => setActive(run)}
+                      className="rounded-none hover:bg-primary/20 hover:text-primary h-8 w-8"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -84,6 +87,7 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
                         size="icon"
                         variant="ghost"
                         onClick={() => onDelete(run.id)}
+                        className="rounded-none hover:bg-destructive/20 hover:text-destructive h-8 w-8"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -99,13 +103,16 @@ export function HistoryTable({ items, onDelete, emptyText }: Props) {
       <Sheet open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-xl overflow-y-auto"
+          className="w-full sm:max-w-xl overflow-y-auto rounded-none border-l-primary/30"
         >
-          <SheetHeader className="px-6 pt-6">
-            <SheetTitle>Run #{active?.id}</SheetTitle>
+          <SheetHeader className="px-6 pt-6 border-b border-border/50 pb-4 mb-4">
+            <SheetTitle className="font-mono uppercase tracking-widest text-primary flex items-center gap-2 text-sm">
+              <div className="w-1.5 h-1.5 bg-primary animate-pulse"></div>
+              Run #{active?.id} Diagnostics
+            </SheetTitle>
           </SheetHeader>
           {active && (
-            <div className="p-6">
+            <div className="px-6">
               <PredictionCard data={active} compact />
             </div>
           )}
