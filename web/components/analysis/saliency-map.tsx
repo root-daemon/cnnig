@@ -22,10 +22,34 @@ export function SaliencyMap({ data }: SaliencyMapProps) {
 
     const getColor = (v: number) => {
       const val = Math.max(0, Math.min(1, v));
-      // JET colormap approximation
-      const r = Math.round(Math.max(0, Math.min(1, 1.5 - Math.abs(4 * val - 3))) * 255);
-      const g = Math.round(Math.max(0, Math.min(1, 1.5 - Math.abs(4 * val - 2))) * 255);
-      const b = Math.round(Math.max(0, Math.min(1, 1.5 - Math.abs(4 * val - 1))) * 255);
+      // Smooth, accurate JET colormap interpolation
+      // 0.0:  [0, 0, 128]    (Dark Blue)
+      // 0.15: [0, 0, 255]    (Blue)
+      // 0.4:  [0, 255, 255]  (Cyan)
+      // 0.6:  [0, 255, 0]    (Green)
+      // 0.8:  [255, 255, 0]  (Yellow)
+      // 1.0:  [255, 0, 0]    (Bright Red)
+      let r = 0, g = 0, b = 0;
+      if (val < 0.15) {
+        const t = val / 0.15;
+        b = 128 + Math.round(t * 127);
+      } else if (val < 0.4) {
+        const t = (val - 0.15) / 0.25;
+        g = Math.round(t * 255);
+        b = 255;
+      } else if (val < 0.6) {
+        const t = (val - 0.4) / 0.2;
+        g = 255;
+        b = Math.round((1 - t) * 255);
+      } else if (val < 0.8) {
+        const t = (val - 0.6) / 0.2;
+        r = Math.round(t * 255);
+        g = 255;
+      } else {
+        const t = (val - 0.8) / 0.2;
+        r = 255;
+        g = Math.round((1 - t) * 255);
+      }
       return [r, g, b];
     };
 
@@ -33,22 +57,52 @@ export function SaliencyMap({ data }: SaliencyMapProps) {
     const height = canvas.height;
     const imgData = ctx.createImageData(width, height);
 
+    const cy = (rows - 1) / 2;
+    const cx = (cols - 1) / 2;
+    // We assume the wafer has a circular boundary with a radius of ~30.5 pixels on a 64x64 grid
+    const maxWaferRadius = 30.5;
+
     for (let y = 0; y < height; y++) {
       const dataY = Math.floor((y / height) * rows);
       for (let x = 0; x < width; x++) {
         const dataX = Math.floor((x / width) * cols);
-        const val = data[dataY]?.[dataX] || 0;
-        const [r, g, b] = getColor(val);
+        
+        // Calculate distance from center to identify pixels outside the wafer
+        const dx = dataX - cx;
+        const dy = dataY - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
         const pixelIdx = (y * width + x) * 4;
-        imgData.data[pixelIdx] = r;
-        imgData.data[pixelIdx + 1] = g;
-        imgData.data[pixelIdx + 2] = b;
-        imgData.data[pixelIdx + 3] = 255;
+
+        if (dist > maxWaferRadius) {
+          // Dark slate background for area outside the wafer (Slate 950: #020617)
+          imgData.data[pixelIdx] = 2;
+          imgData.data[pixelIdx + 1] = 6;
+          imgData.data[pixelIdx + 2] = 23;
+          imgData.data[pixelIdx + 3] = 255;
+        } else {
+          const val = data[dataY]?.[dataX] || 0;
+          // Apply power-law / square root scaling (gamma adjustment) to boost low/medium gradients
+          // and expose hidden details from the raw peaked saliency map.
+          const adjustedVal = Math.sqrt(val);
+          const [r, g, b] = getColor(adjustedVal);
+
+          imgData.data[pixelIdx] = r;
+          imgData.data[pixelIdx + 1] = g;
+          imgData.data[pixelIdx + 2] = b;
+          imgData.data[pixelIdx + 3] = 255;
+        }
       }
     }
 
     ctx.putImageData(imgData, 0, 0);
+
+    // Draw a subtle wafer boundary circle to provide perfect spatial context
+    ctx.beginPath();
+    ctx.arc(width / 2, height / 2, (maxWaferRadius / cols) * width, 0, 2 * Math.PI);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
   }, [data]);
 
   if (!data) {
@@ -69,27 +123,63 @@ export function SaliencyMap({ data }: SaliencyMapProps) {
           Highlights the regions of the wafer map that the CNN model focused on most when predicting the defect class. Red indicates the highest importance, and blue indicates the lowest importance.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center space-y-4">
-        <div className="relative border border-muted rounded-lg overflow-hidden bg-slate-950 p-2 shadow-inner">
-          <canvas
-            ref={canvasRef}
-            width={256}
-            height={256}
-            className="w-64 h-64 [image-rendering:pixelated]"
-          />
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="relative border border-muted rounded-lg overflow-hidden bg-slate-950 p-2 shadow-inner">
+            <canvas
+              ref={canvasRef}
+              width={256}
+              height={256}
+              className="w-64 h-64 [image-rendering:pixelated]"
+            />
+          </div>
+          <div className="flex items-center gap-6 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-[#00007f] rounded-sm" />
+              <span>Low Importance</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-[#00ff00] rounded-sm" />
+              <span>Medium Importance</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-[#7f0000] rounded-sm" />
+              <span>High Importance</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-6 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-[#00007f] rounded-sm" />
-            <span>Low Importance</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-[#00ff00] rounded-sm" />
-            <span>Medium Importance</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-[#7f0000] rounded-sm" />
-            <span>High Importance</span>
+
+        <div className="space-y-4 text-sm text-muted-foreground border-l pl-6 border-muted">
+          <h4 className="text-base font-semibold text-foreground">Saliency Map Generation Algorithm</h4>
+          <p className="leading-relaxed">
+            Saliency Maps are an explainable AI (XAI) technique that provides spatial attribution maps showing exactly which regions of the 64×64 wafer map influenced the CNN model's prediction the most.
+          </p>
+          <div className="space-y-3">
+            <div className="flex gap-3">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">1</div>
+              <div>
+                <strong className="text-foreground">Forward Pass:</strong> The normalized wafer image is fed through the CNN to compute logits. The predicted class index is selected.
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">2</div>
+              <div>
+                <strong className="text-foreground">Gradient Calculation:</strong> We perform backpropagation to compute the gradient of the predicted class score with respect to the input pixels:
+                <code className="block mt-1 p-1 bg-muted rounded text-xs font-mono">gradient = ∂Score / ∂Input</code>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">3</div>
+              <div>
+                <strong className="text-foreground">Absolute Magnitudes:</strong> We take the absolute value of the gradients. Both highly positive or highly negative gradients represent crucial spatial details the model looked at.
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">4</div>
+              <div>
+                <strong className="text-foreground">Scaling & Normalization:</strong> The saliency values are scaled via a square-root transform (gamma-boost) to reveal subtle structural activations, then min-max normalized to <code className="p-0.5 bg-muted rounded text-xs font-mono">[0.0, 1.0]</code>.
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
