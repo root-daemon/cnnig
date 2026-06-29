@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software in academic work, please cite the associated paper and this repository."
+type: software
+title: "CNNIG: Wafer Defect Classification and Analysis"
+version: "0.1.0"
+date-released: "2026-06-30"
+repository-code: "https://github.com/root-daemon/cnnig"
+abstract: >-
+  CNNIG provides a PyTorch WaferCNN classifier, FastAPI inference service, and
+  Next.js dashboard for wafer-map defect classification and visual analysis.
+keywords:
+  - wafer defect classification
+  - convolutional neural network
+  - semiconductor manufacturing
+  - FastAPI
+  - Next.js
+authors:
+  - name: "CNNIG project contributors"

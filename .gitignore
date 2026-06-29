@@ -2,6 +2,7 @@
 .venv/
 __pycache__/
 *.py[cod]
+.mypy_cache/
 .pytest_cache/
 .ruff_cache/
 nvim.log
@@ -16,3 +17,7 @@ web/node_modules/
 web/.env*.local
 web/.vercel/
 web/.git-nested-backup/
+
+node_modules/
+.env
+.env.local
