@@ -9,6 +9,7 @@ from sqlmodel import Session
 
 from api.db import Run, get_session
 from api.model import load_from_bytes, predict_array, to_64x64_array
+from api.rca import get_rca
 from api.schemas import BatchItemResponse, PredictionResponse
 
 router = APIRouter(prefix="/api", tags=["predict"])
@@ -18,12 +19,14 @@ def _run_inference(filename: str, data: bytes, session: Session) -> Run:
     raw = load_from_bytes(filename, data)
     arr = to_64x64_array(raw)
     result = predict_array(arr)
+    rca = get_rca(result["predicted_class"])
     row = Run(
         filename=filename,
         predicted_class=result["predicted_class"],
         confidence=result["confidence"],
         probabilities=json.dumps(result["probabilities"]),
         preview_b64=result["preview_b64"],
+        rca_json=json.dumps(rca),
     )
     session.add(row)
     session.commit()
@@ -39,6 +42,7 @@ def _row_to_response(row: Run) -> PredictionResponse:
         confidence=row.confidence,
         probabilities=json.loads(row.probabilities),
         preview_b64=row.preview_b64,
+        rca=json.loads(row.rca_json) if row.rca_json else get_rca(row.predicted_class),
         created_at=row.created_at,
     )
 
@@ -74,6 +78,7 @@ async def predict_batch(
                     predicted_class=row.predicted_class,
                     confidence=row.confidence,
                     probabilities=json.loads(row.probabilities),
+                    rca=json.loads(row.rca_json) if row.rca_json else get_rca(row.predicted_class),
                     preview_b64=row.preview_b64,
                     created_at=row.created_at,
                 )

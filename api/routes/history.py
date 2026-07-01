@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, func, select
 
 from api.db import Run, get_session
+from api.rca import get_rca
 from api.schemas import HistoryListResponse, PredictionResponse
 
 router = APIRouter(prefix="/api/history", tags=["history"])
@@ -21,6 +22,7 @@ def _to_response(row: Run) -> PredictionResponse:
         confidence=row.confidence,
         probabilities=json.loads(row.probabilities),
         preview_b64=row.preview_b64,
+        rca=json.loads(row.rca_json) if row.rca_json else get_rca(row.predicted_class),
         created_at=row.created_at,
     )
 

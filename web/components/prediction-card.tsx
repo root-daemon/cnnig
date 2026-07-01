@@ -28,7 +28,7 @@ export function PredictionCard({ data, compact }: Props) {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         <div
           className={cn(
             "grid gap-6",
@@ -76,7 +76,99 @@ export function PredictionCard({ data, compact }: Props) {
             })}
           </div>
         </div>
+
+        <div className="space-y-4 border-t pt-5">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h3 className="text-base font-semibold">Root Cause Analysis</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {data.rca.description}
+              </p>
+            </div>
+            <Badge variant="outline">
+              {data.rca.evidence_strength} evidence
+            </Badge>
+          </div>
+
+          <div
+            className={cn(
+              "grid gap-4",
+              compact ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3",
+            )}
+          >
+            <RcaList title="Likely Modules" items={data.rca.likely_modules} />
+            <RcaList title="Investigations" items={data.rca.investigations} />
+            <RcaList title="Corrective Actions" items={data.rca.corrective} />
+          </div>
+
+          {data.rca.evidence.length > 0 && (
+            <div className="rounded-md border overflow-hidden">
+              <div className="grid grid-cols-[1fr_auto] gap-3 bg-muted/40 px-3 py-2 text-xs font-medium uppercase text-muted-foreground">
+                <span>Evidence Traceability</span>
+                <span>Strength</span>
+              </div>
+              <div className="divide-y">
+                {data.rca.evidence.map((item) => (
+                  <div
+                    key={`${item.process_module}-${item.mechanism}-${item.reference_key}`}
+                    className="grid grid-cols-1 gap-2 px-3 py-3 text-sm md:grid-cols-[minmax(140px,0.8fr)_minmax(0,1.6fr)_auto]"
+                  >
+                    <div className="font-medium">{item.process_module}</div>
+                    <div className="min-w-0">
+                      <div className="font-medium">{item.mechanism}</div>
+                      <p className="text-muted-foreground mt-1">{item.basis}</p>
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                        <Badge variant="secondary">{item.provenance}</Badge>
+                        <Badge variant="outline">[{item.reference_key}]</Badge>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="w-fit">
+                      {item.strength}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {data.rca.references.length > 0 && (
+            <details className="rounded-md border px-3 py-2">
+              <summary className="cursor-pointer text-sm font-medium">
+                References
+              </summary>
+              <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
+                {data.rca.references.map((ref) => (
+                  <li key={ref.key}>
+                    <span className="font-medium text-foreground">
+                      [{ref.key}] {ref.type}
+                    </span>{" "}
+                    {ref.cite}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </div>
       </CardContent>
     </Card>
+  );
+}
+
+function RcaList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-md border bg-muted/20 p-3">
+      <h4 className="text-xs font-medium uppercase text-muted-foreground">
+        {title}
+      </h4>
+      {items.length > 0 ? (
+        <ul className="mt-2 space-y-1.5 text-sm">
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2 text-sm text-muted-foreground">No RCA items.</p>
+      )}
+    </div>
   );
 }

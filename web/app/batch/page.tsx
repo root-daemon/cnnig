@@ -215,6 +215,7 @@ export default function BatchPage() {
                 confidence: detail.confidence!,
                 probabilities: detail.probabilities!,
                 preview_b64: detail.preview_b64!,
+                rca: detail.rca!,
                 created_at: detail.created_at!,
               }}
             />

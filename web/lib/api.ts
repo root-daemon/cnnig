@@ -19,7 +19,33 @@ export type PredictionResponse = {
   confidence: number;
   probabilities: Record<string, number>;
   preview_b64: string;
+  rca: RCAResponse;
   created_at: string;
+};
+
+export type RCAEvidence = {
+  process_module: string;
+  mechanism: string;
+  basis: string;
+  strength: string;
+  reference_key: string;
+  provenance: string;
+};
+
+export type RCAReference = {
+  key: string;
+  type: string;
+  cite: string;
+};
+
+export type RCAResponse = {
+  description: string;
+  evidence_strength: string;
+  likely_modules: string[];
+  investigations: string[];
+  corrective: string[];
+  evidence: RCAEvidence[];
+  references: RCAReference[];
 };
 
 export type BatchItemResponse = {
@@ -29,6 +55,7 @@ export type BatchItemResponse = {
   confidence?: number | null;
   probabilities?: Record<string, number> | null;
   preview_b64?: string | null;
+  rca?: RCAResponse | null;
   created_at?: string | null;
   error?: string | null;
 };
