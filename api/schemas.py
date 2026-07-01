@@ -14,6 +14,7 @@ class PredictionResponse(BaseModel):
     confidence: float
     probabilities: dict[str, float]
     preview_b64: str
+    rca: dict
     created_at: datetime
 
 
@@ -24,6 +25,7 @@ class BatchItemResponse(BaseModel):
     confidence: float | None = None
     probabilities: dict[str, float] | None = None
     preview_b64: str | None = None
+    rca: dict | None = None
     created_at: datetime | None = None
     error: str | None = None
 

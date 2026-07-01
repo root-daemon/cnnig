@@ -14,3 +14,7 @@ services:
         value: http://localhost:3000
       - key: CORS_ORIGIN_REGEX
         value: https://.*\.vercel\.app
+      - key: DATABASE_URL
+        sync: false
+      - key: HISTORY_RETENTION_DAYS
+        value: 30
