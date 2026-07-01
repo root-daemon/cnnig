@@ -123,7 +123,7 @@ export function SaliencyMap({ data }: SaliencyMapProps) {
           Highlights the regions of the wafer map that the CNN model focused on most when predicting the defect class. Red indicates the highest importance, and blue indicates the lowest importance.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <CardContent className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className="relative border border-muted rounded-lg overflow-hidden bg-slate-950 p-2 shadow-inner">
             <canvas
@@ -145,40 +145,6 @@ export function SaliencyMap({ data }: SaliencyMapProps) {
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 bg-[#7f0000] rounded-sm" />
               <span>High Importance</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 text-sm text-muted-foreground border-l pl-6 border-muted">
-          <h4 className="text-base font-semibold text-foreground">Saliency Map Generation Algorithm</h4>
-          <p className="leading-relaxed">
-            Saliency Maps are an explainable AI (XAI) technique that provides spatial attribution maps showing exactly which regions of the 64×64 wafer map influenced the CNN model's prediction the most.
-          </p>
-          <div className="space-y-3">
-            <div className="flex gap-3">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">1</div>
-              <div>
-                <strong className="text-foreground">Forward Pass:</strong> The normalized wafer image is fed through the CNN to compute logits. The predicted class index is selected.
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">2</div>
-              <div>
-                <strong className="text-foreground">Gradient Calculation:</strong> We perform backpropagation to compute the gradient of the predicted class score with respect to the input pixels:
-                <code className="block mt-1 p-1 bg-muted rounded text-xs font-mono">gradient = ∂Score / ∂Input</code>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">3</div>
-              <div>
-                <strong className="text-foreground">Absolute Magnitudes:</strong> We take the absolute value of the gradients. Both highly positive or highly negative gradients represent crucial spatial details the model looked at.
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">4</div>
-              <div>
-                <strong className="text-foreground">Scaling & Normalization:</strong> The saliency values are scaled via a square-root transform (gamma-boost) to reveal subtle structural activations, then min-max normalized to <code className="p-0.5 bg-muted rounded text-xs font-mono">[0.0, 1.0]</code>.
-              </div>
             </div>
           </div>
         </div>

@@ -18,14 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { WaferDisplay } from "@/components/analysis/wafer-display";
-import { RegionAnalysis } from "@/components/analysis/region-analysis";
 import { SaliencyMap } from "@/components/analysis/saliency-map";
 import { Topography3D } from "@/components/analysis/topography-3d";
 import { CutlineAnalysis } from "@/components/analysis/cutline-analysis";
 
 const TABS = [
   "Overview",
-  "Region Analysis",
   "Saliency Map",
   "3D Topography",
   "Cutline Analysis",
@@ -208,9 +206,6 @@ export default function ClassifyPage() {
                             </div>
                         </div>
                     )}
-                </TabsContent>
-                <TabsContent value="Region Analysis" className="mt-0 outline-none">
-                    <RegionAnalysis data={result.analysis.region_analysis} />
                 </TabsContent>
                 <TabsContent value="Saliency Map" className="mt-0 outline-none">
                     <SaliencyMap data={result.analysis.saliency_map} />
