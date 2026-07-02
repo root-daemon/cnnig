@@ -28,56 +28,70 @@ export function PredictionCard({ data, compact }: Props) {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div
-          className={cn(
-            "grid gap-6",
-            compact ? "grid-cols-1" : "grid-cols-1 md:grid-cols-[auto_1fr]",
-          )}
-        >
-          <div className="flex justify-center md:justify-start">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`data:image/png;base64,${data.preview_b64}`}
-              alt={`Wafer map preview for ${data.filename}`}
-              className="rounded-md border bg-black/5"
-              width={224}
-              height={224}
-            />
-          </div>
-          <div className="space-y-2">
-            {sorted.map(([name, prob], i) => {
-              const isTop = i === 0;
-              return (
-                <div key={name} className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span
-                      className={cn(
-                        isTop ? "font-semibold" : "text-muted-foreground",
-                      )}
-                    >
-                      {name}
-                    </span>
-                    <span className="tabular-nums text-muted-foreground">
-                      {(prob * 100).toFixed(2)}%
-                    </span>
+      <CardContent
+        className={cn(
+          "grid gap-6",
+          compact ? "grid-cols-1" : "grid-cols-1 xl:grid-cols-2",
+        )}
+      >
+        <div className="space-y-6">
+          <div
+            className={cn(
+              "grid gap-6",
+              compact ? "grid-cols-1" : "grid-cols-1 md:grid-cols-[auto_1fr]",
+            )}
+          >
+            <div className="flex justify-center md:justify-start">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`data:image/png;base64,${data.preview_b64}`}
+                alt={`Wafer map preview for ${data.filename}`}
+                className="rounded-md border bg-black/5"
+                width={224}
+                height={224}
+              />
+            </div>
+            <div className="space-y-2">
+              {sorted.map(([name, prob], i) => {
+                const isTop = i === 0;
+                return (
+                  <div key={name} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span
+                        className={cn(
+                          isTop ? "font-semibold" : "text-muted-foreground",
+                        )}
+                      >
+                        {name}
+                      </span>
+                      <span className="tabular-nums text-muted-foreground">
+                        {(prob * 100).toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-full rounded-full transition-all",
+                          isTop ? "bg-primary" : "bg-muted-foreground/40",
+                        )}
+                        style={{ width: `${prob * 100}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all",
-                        isTop ? "bg-primary" : "bg-muted-foreground/40",
-                      )}
-                      style={{ width: `${prob * 100}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4 border-t pt-5">
+        <div
+          className={cn(
+            "space-y-4",
+            compact
+              ? "border-t pt-5"
+              : "border-t xl:border-l xl:border-t-0 pt-5 xl:pt-0 xl:pl-6",
+          )}
+        >
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
               <h3 className="text-base font-semibold">Root Cause Analysis</h3>
