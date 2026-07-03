@@ -23,7 +23,18 @@ app = FastAPI(title="WaferCNN Dashboard API", lifespan=lifespan)
 
 cors_origins = [
     origin.strip()
-    for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    for origin in os.getenv(
+        "CORS_ORIGINS",
+        ",".join(
+            [
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:3001",
+                "http://192.168.0.146:3001",
+            ]
+        ),
+    ).split(",")
     if origin.strip()
 ]
 cors_origin_regex = os.getenv("CORS_ORIGIN_REGEX")

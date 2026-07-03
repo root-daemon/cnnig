@@ -8,7 +8,7 @@ def _binary_defect_map(image_norm: np.ndarray) -> np.ndarray:
     """Return binary defect map where 1 indicates defect pixel."""
     img_u8 = (np.clip(image_norm, 0.0, 1.0) * 255).astype(np.uint8)
     blur = cv2.GaussianBlur(img_u8, (3, 3), 0)
-    _, th = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    _, th = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     return (th > 0).astype(np.uint8)
 
 
