@@ -89,9 +89,9 @@ The current class labels are:
 - `Edge-Loc`
 - `Edge-Ring`
 - `Local`
+- `Near-full`
 - `Random`
 - `Scratch`
-- `Near-full`
 
 ## Paper Citation
 

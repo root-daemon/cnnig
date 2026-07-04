@@ -22,9 +22,9 @@ CLASS_NAMES = [
     "Edge-Loc",
     "Edge-Ring",
     "Local",
+    "Near-full",
     "Random",
     "Scratch",
-    "Near-full",
 ]
 NUM_CLASSES = len(CLASS_NAMES)
 DEVICE = torch.device(

@@ -164,9 +164,9 @@ The model outputs one of these 8 classes:
 3. Edge-Loc
 4. Edge-Ring
 5. Local
-6. Random
-7. Scratch
-8. Near-full
+6. Near-full
+7. Random
+8. Scratch
 
 ## 10) Notes for Production
 

@@ -12,9 +12,9 @@ CLASS_NAMES: List[str] = [
     "Edge-Loc",
     "Edge-Ring",
     "Local",
+    "Near-full",
     "Random",
     "Scratch",
-    "Near-full",
 ]
 
 

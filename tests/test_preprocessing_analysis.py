@@ -2,9 +2,25 @@ import numpy as np
 import unittest
 
 from api.analysis import _binary_defect_map
+from api.model import CLASS_NAMES
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_class_names_match_trained_label_encoder_order(self) -> None:
+        self.assertEqual(
+            CLASS_NAMES,
+            [
+                "Center",
+                "Donut",
+                "Edge-Loc",
+                "Edge-Ring",
+                "Local",
+                "Near-full",
+                "Random",
+                "Scratch",
+            ],
+        )
+
     def test_binary_defect_map_marks_bright_defects_not_background(self) -> None:
         arr = np.zeros((64, 64), dtype=np.float32)
         arr[8:56, 8:56] = 0.05

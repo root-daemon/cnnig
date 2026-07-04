@@ -7,9 +7,9 @@ export const CLASS_NAMES = [
   "Edge-Loc",
   "Edge-Ring",
   "Local",
+  "Near-full",
   "Random",
   "Scratch",
-  "Near-full",
 ] as const;
 
 export type PredictionResponse = {
