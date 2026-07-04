@@ -104,7 +104,7 @@ export default function ClassifyPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="space-y-6 lg:col-span-1">
+          <div className="space-y-6 lg:col-span-1 lg:order-2">
             <Card className="shadow-sm">
               <CardHeader>
                 <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function ClassifyPage() {
             {result && <PredictionCard data={result.prediction} compact />}
           </div>
 
-          <div className="lg:col-span-2 border rounded-xl bg-card shadow-sm overflow-hidden p-1">
+          <div className="lg:col-span-2 lg:order-1 border rounded-xl bg-card shadow-sm overflow-hidden p-1">
              <WaferDisplay 
                 imageUrl={imageUrl} 
                 xLine={xLine} 
