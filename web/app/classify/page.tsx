@@ -6,7 +6,11 @@ import { Loader2, FileImage, X, Microscope } from "lucide-react";
 
 import { api, type AnalyzeResponse } from "@/lib/api";
 import { UploadZone } from "@/components/upload-zone";
-import { PredictionCard } from "@/components/prediction-card";
+import {
+  PredictionHeader,
+  PredictionSummary,
+  RcaPanel,
+} from "@/components/prediction-card";
 import {
   Card,
   CardContent,
@@ -103,8 +107,8 @@ export default function ClassifyPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="space-y-6 lg:col-span-1 lg:order-2">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[320px_minmax(0,1fr)_420px]">
+          <div className="space-y-6">
             <Card className="shadow-sm">
               <CardHeader>
                 <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -154,10 +158,19 @@ export default function ClassifyPage() {
               </CardContent>
             </Card>
 
-            {result && <PredictionCard data={result.prediction} compact />}
+            {result && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <PredictionHeader data={result.prediction} />
+                </CardHeader>
+                <CardContent>
+                  <PredictionSummary data={result.prediction} compact />
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          <div className="lg:col-span-2 lg:order-1 border rounded-xl bg-card shadow-sm overflow-hidden p-1">
+          <div className="min-h-[520px] border rounded-xl bg-card shadow-sm overflow-hidden p-1">
              <WaferDisplay 
                 imageUrl={imageUrl} 
                 xLine={xLine} 
@@ -165,6 +178,14 @@ export default function ClassifyPage() {
                 onCutlineChange={handleCutlineChange} 
              />
           </div>
+
+          {result && (
+            <Card className="h-fit xl:sticky xl:top-6">
+              <CardContent className="pt-6">
+                <RcaPanel data={result.prediction} compact separated={false} />
+              </CardContent>
+            </Card>
+          )}
       </div>
 
       {result && (
